@@ -1,0 +1,7 @@
+---
+- name: Master joins cluster
+  shell: "{{ hostvars['swarm-master-1'].master_join_command }} >> node_joined.txt"
+  when: inventory_hostname != "swarm-master-1"
+  args:
+    chdir: $HOME
+    creates: node_joined.txt

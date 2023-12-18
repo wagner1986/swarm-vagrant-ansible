@@ -8,7 +8,7 @@
 * VirtualBox - https://www.virtualbox.org/
 * Vagrant - https://www.vagrantup.com/
 
-In this tutorial, we will learn some simple concepts about Infrastructure as Code (IaC) and we will cover a walkthrough of the Docker native container orchestrator, namely **Swarm**. This tool - once needing a separate installation, but now included in the Docker Engine setup - is analogous to Kubernetes, though much simpler and therefore more suitable for a first hands-on to container orchestration. 
+In this tutorial, we will learn some simple concepts about Infrastructure as Code (IaC) and we will cover a walkthrough of the Docker native container orchestrator, namely **Swarm**. This tool - once needing a separate installation, but now included in the Docker Engine setup - is analogous to Kubernetes, though much simpler and therefore more suitable for a first hands-on to container orchestration.
 
 Similarly, the IaC topic will be explored with **Vagrant**, an automation layer above a hypervisor - in our case, VirtualBox. Vagrant leverages a declarative configuration file which describes all your software requirements, packages, operating system configuration, users, and more. With this tool, we will be able to provision four Linux nodes, based on a standard template image, with the proper properties in terms of hardware requirement and network configuration.
 
@@ -304,3 +304,20 @@ $ vagrant destroy --force
 [7]: ./Images/swarm-007.png
 [8]: ./Images/swarm-008.png
 [9]: ./Images/swarm-009.png
+
+
+vagrant destroy -f
+vagrant up
+vagrant ssh swarm-master-2
+docker node ls
+docker service ls
+docker service logs traefik_traefik
+docker network
+http://192.168.77.10:8080/
+
+
+# Run Ansible playbooks
+echo -e "\nRUNNING ANSIBLE [cluster.yml] **************************************************\n"
+ansible-playbook --inventory-file=hosts playbooks/cluster-swarm.yml
+echo -e "\nRUNNING ANSIBLE [tools.yml] *******************************************\n"
+ansible-playbook --inventory-file=hosts playbooks/tools.yml

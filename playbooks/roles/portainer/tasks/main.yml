@@ -1,0 +1,23 @@
+---
+- name: Create portainer Stack File
+  template:
+    src: templates/portainer-stack.yml.j2
+    dest: portainer-stack.yml
+
+- name: Deploy portainer Stack
+  command: docker stack deploy -c portainer-stack.yml portainer
+  async: 180
+  poll: 0
+  register: deploy_result_portainer
+
+- name: Wait for the task to complete
+  async_status:
+    jid: "{{ deploy_result_portainer.ansible_job_id }}"
+  register: job_result_portaine
+  until: job_result_portaine.finished
+  retries: 30
+  delay: 10
+
+- name: Display the task output
+  debug:
+    var: job_result_portaine

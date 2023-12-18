@@ -1,0 +1,31 @@
+---
+- name: Create Traefik Stack File
+  template:
+    src: templates/traefik-stack.yml.j2
+    dest: traefik-stack.yml
+
+# - name: Check if Traefik Network exists
+#   command: docker network ls --format {{.Name}} | grep -w traefik-public
+#   register: network_exists
+
+- name: Create Traefik Network if it doesn't exist
+  command: docker network create --driver=overlay traefik-public
+  ignore_errors: yes
+
+- name: Deploy Traefik Stack
+  command: docker stack deploy -c traefik-stack.yml traefik
+  async: 180
+  poll: 0
+  register: deploy_result_traefik
+
+- name: Wait for the task to complete
+  async_status:
+    jid: "{{ deploy_result_traefik.ansible_job_id }}"
+  register: job_result_traefik
+  until: job_result_traefik.finished
+  retries: 30
+  delay: 10
+
+- name: Display the task output
+  debug:
+    var: job_result_traefik

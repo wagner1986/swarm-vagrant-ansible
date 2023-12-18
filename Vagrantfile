@@ -1,10 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 nodes = [
-  { :hostname => 'swarm-master-1', :ip => '192.168.77.10', :ram => 1024, :cpus => 1 },
-  { :hostname => 'swarm-master-2', :ip => '192.168.77.11', :ram => 1024, :cpus => 1 },
   { :hostname => 'swarm-worker-1', :ip => '192.168.77.12', :ram => 1024, :cpus => 1 },
-  { :hostname => 'swarm-worker-2', :ip => '192.168.77.13', :ram => 1024, :cpus => 1 }
+  { :hostname => 'swarm-worker-2', :ip => '192.168.77.13', :ram => 1024, :cpus => 1 },
+  { :hostname => 'swarm-master-1', :ip => '192.168.77.10', :ram => 1024, :cpus => 1 },
+  { :hostname => 'swarm-master-2', :ip => '192.168.77.11', :ram => 1024, :cpus => 1 }
 ]
 
 Vagrant.configure("2") do |config|
@@ -29,10 +29,12 @@ Vagrant.configure("2") do |config|
       end
     end
   end
-  # In addition, swarm-worker-2 is the Ansible server
-  config.vm.define "swarm-worker-2" do |ansible|
+  # In addition, swarm-master-2 is the Ansible server
+  config.vm.define "swarm-master-2" do |ansible|
     # Provision Ansible playbook
-    ansible.vm.provision "file", source: "../Ansible", destination: "$HOME"
+    ansible.vm.provision "file", source: "./Ansible", destination: "$HOME"
+    ansible.vm.synced_folder "./playbooks", "/home/vagrant/playbooks"
+
     # Install Ansible and configure nodes
     ansible.vm.provision "shell", path: "ansible.sh"
   end

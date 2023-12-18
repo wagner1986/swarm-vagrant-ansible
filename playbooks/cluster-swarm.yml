@@ -1,0 +1,35 @@
+---
+- hosts: all
+  become: true
+  become_method: sudo
+  tasks:
+    - include_vars: "{{playbook_dir}}/vars.yml"
+    - import_role:
+        name: basic
+
+- hosts: masters
+  become: true
+  become_method: sudo
+  tasks:
+    - include_vars: "{{playbook_dir}}/vars.yml"
+    - import_role:
+        name: masters
+
+
+- hosts: workers
+  become: true
+  become_method: sudo
+  tasks:
+    - include_vars: "{{playbook_dir}}/vars.yml"
+    - import_role:
+        name: workers
+
+- hosts: all
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Reiniciar as maquinas
+      wait_for_connection:
+        delay: 60
+        timeout: 300
+        sleep: 5

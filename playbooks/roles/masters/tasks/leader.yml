@@ -1,0 +1,26 @@
+- name: Initialize the cluster
+  shell: docker swarm init --advertise-addr 192.168.77.10 >> cluster_initialized.txt
+  when: inventory_hostname == "swarm-master-1"
+  args:
+    chdir: $HOME
+    creates: cluster_initialized.txt
+
+- name: Get master join command
+  shell: docker swarm join-token manager
+  when: inventory_hostname == "swarm-master-1"
+  register: master_join_command_raw
+
+- name: Set master join command
+  when: inventory_hostname == "swarm-master-1"
+  set_fact:
+    master_join_command: "{{ master_join_command_raw.stdout_lines[2] }}"
+
+- name: Get worker join command
+  shell: docker swarm join-token worker
+  when: inventory_hostname == "swarm-master-1"
+  register: worker_join_command_raw
+
+- name: Set worker join command
+  when: inventory_hostname == "swarm-master-1"
+  set_fact:
+    worker_join_command: "{{ worker_join_command_raw.stdout_lines[2] }}"
